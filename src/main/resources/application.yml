@@ -1,5 +1,8 @@
 spring:
   datasource:
+    url:
+    username:
+    password:
     driver-class-name: org.h2.Driver
   thymeleaf:
     prefix: classpath:/templates/

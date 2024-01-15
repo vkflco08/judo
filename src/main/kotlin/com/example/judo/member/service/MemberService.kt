@@ -6,10 +6,13 @@ import com.example.judo.common.exception.InvalidInputException
 import com.example.judo.common.status.ROLE
 import com.example.judo.member.dto.LoginDto
 import com.example.judo.member.dto.MemberDtoRequest
+import com.example.judo.member.dto.MemberDtoResponse
+import com.example.judo.member.entity.Member
 import com.example.judo.member.entity.MemberRole
 import com.example.judo.member.repository.MemberRepository
 import com.example.judo.member.repository.MemberRoleRepository
 import jakarta.transaction.Transactional
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.stereotype.Service
@@ -46,5 +49,23 @@ class MemberService(
         val authentication = authenticationManagerBuilder.`object`.authenticate(authenticationToken)
 
         return jwtTokenProvider.createToken(authentication)
+    }
+
+    /**
+     * 내정보 조회
+     */
+    fun searchMyInfo(id: Long): MemberDtoResponse {
+        val member: Member = memberRepository.findByIdOrNull(id) ?: throw InvalidInputException("id", "회원번호(${id})가 존재하지 않습니다.")
+        return member.toDto()
+    }
+
+    /**
+     * 내 정보 수정
+     */
+
+    fun saveMyInfo(memberDtoRequest: MemberDtoRequest): String{
+        val member: Member = memberDtoRequest.toEntity()
+        memberRepository.save(member)
+        return "수정 완료되었습니다."
     }
 }

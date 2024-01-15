@@ -2,8 +2,10 @@ package com.example.judo.member.entity
 
 import com.example.judo.common.status.Gender
 import com.example.judo.common.status.ROLE
+import com.example.judo.member.dto.MemberDtoResponse
 import jakarta.persistence.*
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 
 @Entity
@@ -37,6 +39,13 @@ class Member (
     ){
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
     val memberRole: List<MemberRole>? = null
+
+    // birthDate를 string 으로 바꾸기 위한 함수
+    private fun LocalDate.formatDate(): String =
+        this.format(DateTimeFormatter.ofPattern("yyyyMMdd"))
+
+    fun toDto(): MemberDtoResponse =
+        MemberDtoResponse(id!!, loginId, name, birthDate.formatDate(), gender.desc, email)
 }
 
 @Entity
